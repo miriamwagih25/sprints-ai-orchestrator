@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+import re
 
 from langchain_core.tools import tool
 
@@ -42,6 +43,11 @@ def run_python(code: str, timeout: int = TIMEOUT_SECONDS) -> dict:
         "stdout": proc.stdout[:MAX_OUTPUT_CHARS],
         "stderr": proc.stderr[:MAX_OUTPUT_CHARS],
     }
+def strip_code_fences(text: str) -> str:
+    """Remove markdown code fences (```python ... ```) that LLMs often add."""
+    text = text.strip()
+    match = re.search(r"```(?:python|py)?\s*\n(.*?)```", text, re.DOTALL | re.IGNORECASE)
+    return (match.group(1) if match else text).strip()
 
 
 @tool
@@ -50,7 +56,7 @@ def run_student_code(code: str) -> str:
     its printed output, or the error message if it crashed or ran too long.
     Use it to check whether a learner's solution actually works."""
     try:
-        result = run_python(code)
+        result = run_python(strip_code_fences(code))
     except Exception as e:
         return f"Unable to verify: the code runner failed ({e})."
     if result["status"] == "success":

@@ -19,9 +19,10 @@ def build_database() -> None:
 
 
 @tool
-def describe_learner_db() -> str:
+def describe_learner_db(table: str = "learners") -> str:
     """Show the columns and 3 sample rows of the Sprints learner table.
-    Call this FIRST to learn the column names before writing any SQL."""
+    Call this FIRST to learn the column names before writing any SQL.
+    The only table is 'learners'; leave the table argument at its default."""
     try:
         conn = sqlite3.connect(f"{DB_PATH.as_uri()}?mode=ro", uri=True)
         try:
@@ -40,7 +41,7 @@ def query_learner_db(sql: str) -> str:
     """Run ONE read-only SQL SELECT query on the Sprints learner table
     (table name: learners) and return up to 50 rows. Use it to look up a
     learner's bootcamp track, progress, or career goals. Only SELECT is allowed."""
-    sql_clean = sql.strip().rstrip(";")
+    sql_clean = sql.replace("```sql", "").replace("```", "").strip().rstrip(";")
     if not sql_clean.lower().startswith("select") or ";" in sql_clean:
         return "Unable to verify: only a single read-only SELECT query is allowed."
     try:
