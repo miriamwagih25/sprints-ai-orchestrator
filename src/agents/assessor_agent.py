@@ -6,7 +6,7 @@ from src.config import get_llm
 from src.state import AgentState
 from src.tools.code_repl import run_student_code
 
-MAX_ITERATIONS = 1
+MAX_ITERATIONS = 3
 FALLBACK = "Unable to verify: the code could not be executed, so it cannot be graded reliably."
 CRITIC_UNAVAILABLE = "Critic unavailable: this grade was not independently reviewed."
 RUBRIC = (
