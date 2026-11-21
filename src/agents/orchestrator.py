@@ -99,16 +99,18 @@ def assessor_node(state: AgentState) -> dict:
     out = _assessor().invoke(
         {"assignment": state["assignment"], "student_code": state["student_code"]}
     )
+    approved = out["approved"] and not state.get("force_review")
     update = {
         "score": out["score"],
         "feedback": out["feedback"],
-        "approved": out["approved"],
+        "approved": approved,
         "iterations": out["iterations"],
         "history": out["history"],
         "student_code": "",  # clear so the next message is routed normally
         "assignment": "",
+        "force_review": False,
     }
-    if out["approved"]:
+    if approved:
         update["messages"] = [out["messages"][-1]]
     return update
 

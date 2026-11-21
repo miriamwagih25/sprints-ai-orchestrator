@@ -30,3 +30,4 @@ class AgentState(TypedDict, total=False):
     approved: bool
     iterations: int
     history: list[dict]
+    force_review: bool

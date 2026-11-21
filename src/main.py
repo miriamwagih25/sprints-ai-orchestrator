@@ -3,6 +3,7 @@
 Commands:
   <any text>   ask a question (routed to the Advisor or the learner database)
   /grade       grade a built-in sample submission (may trigger human review)
+  /escalate    grade the sample and force human review (for demonstration)
   /student ID  switch to another student's session (separate memory)
   /quit        exit
 """
@@ -55,11 +56,12 @@ def main() -> None:
             print(f"Switched to {student}")
             continue
         config = {"configurable": {"thread_id": student}}
-        if text == "/grade":
+        if text in ("/grade", "/escalate"):
             payload = {
                 "messages": [HumanMessage("Please grade my submission.")],
                 "assignment": SAMPLE_ASSIGNMENT,
                 "student_code": SAMPLE_CODE,
+                "force_review": text == "/escalate",
             }
         else:
             payload = {"messages": [HumanMessage(text)]}
